@@ -4,6 +4,7 @@ version: '2'
 services:
   drupal:
     # image: drupal:8.8.2
+    # build: . = shorthand to use defaults (i.e. context: . dockerfile: Dockerfile, etc.)
     build:
       context: .
       dockerfile: Dockerfile
@@ -32,4 +33,4 @@ volumes:
   drupal-profiles:
   drupal-sites:
   drupal-themes:
-  drupal-data:
+drupal-data:

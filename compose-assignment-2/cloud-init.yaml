@@ -1,0 +1,28 @@
+#cloud-config
+package_upgrade: true
+
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDNSaO6+noBM8TF79IPcBeVzj4qyAdoSWl5R+bkoy2XIq2LBg0dLZiIVT2k3CP9icALnHpABiPKQeIhsQAsfAbtml0XKvuet2ZKSJD1oqLGVTLSuqeuCMKOGZsZeAe1MZprPp5qIYILRgbhTb3FxoV7McZJ5pG1Qg9O0gR8UmyQG5plwM3S6UldsJC+LYdBoLD4TQvymnGxqDAyBjBrW1gEl0pHG1NUHyx5tCuJ+Ds4RSdXmz4D9m6aJhdt2prSk49YdZVqYWOf2GwSdmgkbhs5zvxj2G7d/eGxiyyjcVK4PtSX5OzkB7sS3dd7ZCLn3rRaME8/q1ZT/l5r7Gew0Xuf42yVsCuKQB1RZG7eBll/3nXszVg3Wj07Gc02dPIjGfpPsesKY9Vut+2+H/GZBQSfSNHTRlpSN3VFZmYZBr2W3+cXP97K/2VkmnZUGi7oAtDZiiPcdPTnxV9ocno6v78G0eYO8/xuykf9ICBheGs4B+5UY7llgtRaNiqjQX3a578JnJ2ZCg2rmKDzsmYr/7su9pNxVqXoQ/KyI1QRDDJh5MHKD9ix4nrAcQ+bXelcykK+pb/c6WFHNimrh62baVqxDWeFVjenHAZJrDad1gTxw954dmfPHLLMSzkMqt/I3LB+on7fc1kCJieOJMS6UIxyOH3dQThDseEwv4ao5iNvWQ== daramirez@vmware.com
+
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+# create the docker group
+groups:
+  - docker
+
+# Add default auto created user to docker group
+system_info:
+  default_user:
+    groups: [docker]
+
+runcmd:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  - echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  - apt-get update
+  - apt-get install -y docker-ce docker-ce-cli containerd.io
+  - curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  - chmod +x /usr/local/bin/docker-compose
