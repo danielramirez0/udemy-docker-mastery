@@ -1,15 +1,10 @@
 # create your drupal and postgres config here, based off the last assignment
-version: '2'
+version: '3.1'
 
 services:
+  
   drupal:
-    # image: drupal:8.8.2
-    # build: . = shorthand to use defaults (i.e. context: . dockerfile: Dockerfile, etc.)
-    build:
-      context: .
-      dockerfile: Dockerfile
-      
-    image: custom-drupal
+    image: drupal:8.8.2
     ports:
       - 8080:80
     volumes:
@@ -18,15 +13,15 @@ services:
       - drupal-sites:/var/www/html/themes
       - drupal-themes:/var/www/html/sites
     restart: always
+
   postgres:
     image: postgres:12.1
     environment:
-      # - POSTGRES_DB=drupal
-      # - POSTGRES_USER=adm
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD_FILE=/run/secrets/psql-pw
+    secrets:
+      - psql-pw
     volumes:
       - drupal-data:/var/lib/postgresql/data
-    restart: always
 
 volumes:
   drupal-modules:
@@ -34,3 +29,7 @@ volumes:
   drupal-sites:
   drupal-themes:
   drupal-data:
+
+secrets:
+  psql-pw:
+    external: true
